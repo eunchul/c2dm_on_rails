@@ -35,8 +35,8 @@ easily add Android Cloud to Device Messaging support to your Rails application.
     "lib/c2dm_on_rails/libs/connection.rb",
     "lib/c2dm_on_rails/tasks/c2dm.rake",
     "lib/generators/c2dm_migrations_generator.rb",
-    "lib/generators/templates/c2dm_migrations/create_c2dm_devices.rb",
-    "lib/generators/templates/c2dm_migrations/create_c2dm_notifications.rb"
+    "lib/generators/templates/migrations/create_c2dm_devices.rb",
+    "lib/generators/templates/migrations/create_c2dm_notifications.rb"
   ]
   s.homepage = %q{http://github.com/eunchul/c2dm_on_rails}
   s.require_paths = ["lib"]
