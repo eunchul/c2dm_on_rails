@@ -2,31 +2,6 @@ require 'configatron'
 require 'gdata'
 require 'uri'
 
-rails_root = File.join(FileUtils.pwd, 'rails_root')
-if defined?(RAILS_ROOT)
-  rails_root = RAILS_ROOT
-end
-
-rails_env = 'development'
-if defined?(RAILS_ENV)
-  rails_env = RAILS_ENV
-end
-
-begin 
-  APP_CONFIG = YAML.load_file("#{RAILS_ROOT}/config/c2dm.yml")[rails_env]
-rescue => ex
-  raise C2dm::Errors.ConfigFileNotFound.new(ex.message)
-end
-
-begin
-  configatron.c2dm.api_url = URI.parse('https://android.apis.google.com/c2dm/send')
-  configatron.c2dm.username = APP_CONFIG['username']
-  configatron.c2dm.password = APP_CONFIG['password']
-  configatron.c2dm.app_name = APP_CONFIG['app_name']
-rescue => ex
-  raise C2dm::Errors.ConfigFileMissingAttributes.new(ex.message)
-end
-
 module C2dm # :nodoc:
   
   module Errors # :nodoc:
@@ -125,6 +100,34 @@ module C2dm # :nodoc:
   end # Errors
   
 end # APN
+
+
+
+rails_root = File.expand_path(FileUtils.pwd)
+if defined?(Rails.root) && Rails.root
+  rails_root = Rails.root
+end
+
+rails_env = 'development'
+if defined?(Rails.env)
+  rails_env = Rails.env
+end
+
+begin 
+  APP_CONFIG = YAML.load_file("#{rails_root}/config/c2dm.yml")[rails_env]
+rescue => ex
+  raise C2dm::Errors::ConfigFileNotFound.new(ex.message)
+end
+
+begin
+  configatron.c2dm.api_url = URI.parse('https://android.apis.google.com/c2dm/send')
+  configatron.c2dm.username = APP_CONFIG['username']
+  configatron.c2dm.password = APP_CONFIG['password']
+  configatron.c2dm.app_name = APP_CONFIG['app_name']
+rescue => ex
+  raise C2dm::Errors::ConfigFileMissingAttributes.new(ex.message)
+end
+
 
 Dir.glob(File.join(File.dirname(__FILE__), 'app', 'models', 'c2dm', '*.rb')).sort.each do |f|
   require f

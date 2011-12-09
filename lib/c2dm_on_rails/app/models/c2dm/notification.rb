@@ -36,7 +36,7 @@ class C2dm::Notification < C2dm::Base
     # 
     # This can be run from the following Rake task:
     #   $ rake c2dm:notifications:deliver
-    def send_notifications(notifications = C2dm::Notification.all(:conditions => {:sent_at => nil}, :joins => :device, :readonly => false))
+    def send_notifications(notifications = C2dm::Notification.all(:conditions => {:sent_at => nil}))
       unless notifications.nil? || notifications.empty?
         C2dm::Connection.open do |token|
           notifications.each do |noty|
@@ -67,7 +67,7 @@ class C2dm::Notification < C2dm::Base
                 noty.save!
               end
             elsif response[:code] == 503
-              raise C2dm::Errors:ServiceUnavailable.new(response[:message])
+              raise C2dm::Errors::ServiceUnavailable.new(response[:message])
             elsif response[:code] == 401
               raise C2dm::Errors::InvalidAuthToken.new(response[:message])
             else
